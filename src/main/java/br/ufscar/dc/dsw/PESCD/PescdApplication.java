@@ -5,6 +5,7 @@ import br.ufscar.dc.dsw.PESCD.models.ConfiguracaoSistemaModel;
 import br.ufscar.dc.dsw.PESCD.models.DocumentacaoDocenciaModel;
 import br.ufscar.dc.dsw.PESCD.models.LogStatusAlunoOfertaModel;
 import br.ufscar.dc.dsw.PESCD.models.OfertaModel;
+import br.ufscar.dc.dsw.PESCD.models.PerfilModel;
 import br.ufscar.dc.dsw.PESCD.models.PerfilUsuario;
 import br.ufscar.dc.dsw.PESCD.models.PlanoTrabalhoModel;
 import br.ufscar.dc.dsw.PESCD.models.StatusAlunoOferta;
@@ -16,10 +17,12 @@ import br.ufscar.dc.dsw.PESCD.repositories.ConfiguracaoSistemaRepository;
 import br.ufscar.dc.dsw.PESCD.repositories.DocumentacaoDocenciaRepository;
 import br.ufscar.dc.dsw.PESCD.repositories.LogStatusAlunoOfertaRepository;
 import br.ufscar.dc.dsw.PESCD.repositories.OfertaRepository;
+import br.ufscar.dc.dsw.PESCD.repositories.PerfilRepository;
 import br.ufscar.dc.dsw.PESCD.repositories.PlanoTrabalhoRepository;
 import br.ufscar.dc.dsw.PESCD.repositories.UsuarioRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,14 +40,22 @@ public class PescdApplication {
 		var documentacaoDocenciaRepository = context.getBean(DocumentacaoDocenciaRepository.class);
 		var logStatusRepository = context.getBean(LogStatusAlunoOfertaRepository.class);
 		var configuracaoSistemaRepository = context.getBean(ConfiguracaoSistemaRepository.class);
+		var perfilRepository = context.getBean(PerfilRepository.class);
+		var passwordEncoder = context.getBean(PasswordEncoder.class);
+
+		var perfilAdmin = obterOuCriarPerfil(perfilRepository, PerfilUsuario.ROLE_ADMIN);
+		var perfilSecretario = obterOuCriarPerfil(perfilRepository, PerfilUsuario.ROLE_SECRETARIO);
+		var perfilAluno = obterOuCriarPerfil(perfilRepository, PerfilUsuario.ROLE_ALUNO);
+		var perfilSupervisor = obterOuCriarPerfil(perfilRepository, PerfilUsuario.ROLE_SUPERVISOR);
+		var perfilResponsavel = obterOuCriarPerfil(perfilRepository, PerfilUsuario.ROLE_RESPONSAVEL);
 
 		if (usuarioRepository.count() == 0) {
-			var administrador = criarUsuario("Administrador PESCD", "admin@ufscar.br", "admin", "admin", PerfilUsuario.ADMINISTRADOR);
-			var secretario = criarUsuario("Secretario PESCD", "secretario@ufscar.br", "secretario", "secretario", PerfilUsuario.SECRETARIO);
-			var professorResponsavel = criarUsuario("Professor Responsavel", "responsavel@ufscar.br", "responsavel", "responsavel", PerfilUsuario.PROFESSOR);
-			var professorSupervisor = criarUsuario("Professor Supervisor", "supervisor@ufscar.br", "supervisor", "supervisor", PerfilUsuario.PROFESSOR);
-			var alunoEstagio = criarUsuario("Aluno Estagio", "aluno.estagio@ufscar.br", "aluno.estagio", "123456", PerfilUsuario.ALUNO);
-			var alunoDocumentacao = criarUsuario("Aluno Documentacao", "aluno.documentacao@ufscar.br", "aluno.documentacao", "654321", PerfilUsuario.ALUNO);
+			var administrador = criarUsuario("Administrador PESCD", "admin@ufscar.br", "admin", "admin", passwordEncoder, perfilAdmin);
+			var secretario = criarUsuario("Secretario PESCD", "secretario@ufscar.br", "secretario", "secretario", passwordEncoder, perfilSecretario);
+			var professorResponsavel = criarUsuario("Professor Responsavel", "responsavel@ufscar.br", "responsavel", "responsavel", passwordEncoder, perfilResponsavel);
+			var professorSupervisor = criarUsuario("Professor Supervisor", "supervisor@ufscar.br", "supervisor", "supervisor", passwordEncoder, perfilSupervisor);
+			var alunoEstagio = criarUsuario("Aluno Estagio", "aluno.estagio@ufscar.br", "aluno.estagio", "123456", passwordEncoder, perfilAluno);
+			var alunoDocumentacao = criarUsuario("Aluno Documentacao", "aluno.documentacao@ufscar.br", "aluno.documentacao", "654321", passwordEncoder, perfilAluno);
 
 			usuarioRepository.save(administrador);
 			usuarioRepository.save(secretario);
@@ -100,13 +111,27 @@ public class PescdApplication {
 		}
 	}
 
-	private static UsuarioModel criarUsuario(String nomeCompleto, String email, String nomeUsuario, String senha, PerfilUsuario perfil) {
+	private static PerfilModel obterOuCriarPerfil(PerfilRepository perfilRepository, PerfilUsuario perfil) {
+		return perfilRepository.findByNome(perfil)
+				.orElseGet(() -> perfilRepository.save(new PerfilModel(perfil)));
+	}
+
+	private static UsuarioModel criarUsuario(
+			String nomeCompleto,
+			String email,
+			String username,
+			String password,
+			PasswordEncoder passwordEncoder,
+			PerfilModel... perfis) {
 		var usuario = new UsuarioModel();
 		usuario.setNomeCompleto(nomeCompleto);
 		usuario.setEmail(email);
-		usuario.setNomeUsuario(nomeUsuario);
-		usuario.setSenha(senha);
-		usuario.setPerfil(perfil);
+		usuario.setUsername(username);
+		usuario.setPassword(passwordEncoder.encode(password));
+		usuario.setEnabled(true);
+		for (PerfilModel perfil : perfis) {
+			usuario.adicionarPerfil(perfil);
+		}
 		return usuario;
 	}
 
