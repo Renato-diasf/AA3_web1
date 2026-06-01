@@ -22,16 +22,24 @@ public class UsuarioModel implements Serializable {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
-    private String nomeUsuario;
+    @Column(nullable = false, unique = true, length = 60)
+    private String username;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
-    private String senha;
+    private String password;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PerfilUsuario perfil;
+    private boolean enabled = true;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "TB_USUARIO_PERFIL",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "perfil_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"usuario_id", "perfil_id"})
+    )
+    private Set<PerfilModel> perfis = new HashSet<>();
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "professorResponsavel")
@@ -69,28 +77,56 @@ public class UsuarioModel implements Serializable {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Set<PerfilModel> getPerfis() {
+        return perfis;
+    }
+
+    public void setPerfis(Set<PerfilModel> perfis) {
+        this.perfis = perfis;
+    }
+
+    public void adicionarPerfil(PerfilModel perfil) {
+        this.perfis.add(perfil);
+    }
+
     public String getNomeUsuario() {
-        return nomeUsuario;
+        return username;
     }
 
     public void setNomeUsuario(String nomeUsuario) {
-        this.nomeUsuario = nomeUsuario;
+        this.username = nomeUsuario;
     }
 
     public String getSenha() {
-        return senha;
+        return password;
     }
 
     public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public PerfilUsuario getPerfil() {
-        return perfil;
-    }
-
-    public void setPerfil(PerfilUsuario perfil) {
-        this.perfil = perfil;
+        this.password = senha;
     }
 
     public Set<OfertaModel> getOfertasResponsavel() {
