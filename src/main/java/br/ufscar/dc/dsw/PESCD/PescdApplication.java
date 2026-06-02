@@ -50,12 +50,12 @@ public class PescdApplication {
 		var perfilResponsavel = obterOuCriarPerfil(perfilRepository, PerfilUsuario.ROLE_RESPONSAVEL);
 
 		if (usuarioRepository.count() == 0) {
-			var administrador = criarUsuario("Administrador PESCD", "admin@ufscar.br", "admin", "admin", passwordEncoder, perfilAdmin);
-			var secretario = criarUsuario("Secretario PESCD", "secretario@ufscar.br", "secretario", "secretario", passwordEncoder, perfilSecretario);
-			var professorResponsavel = criarUsuario("Professor Responsavel", "responsavel@ufscar.br", "responsavel", "responsavel", passwordEncoder, perfilResponsavel);
-			var professorSupervisor = criarUsuario("Professor Supervisor", "supervisor@ufscar.br", "supervisor", "supervisor", passwordEncoder, perfilSupervisor);
-			var alunoEstagio = criarUsuario("Aluno Estagio", "aluno.estagio@ufscar.br", "aluno.estagio", "123456", passwordEncoder, perfilAluno);
-			var alunoDocumentacao = criarUsuario("Aluno Documentacao", "aluno.documentacao@ufscar.br", "aluno.documentacao", "654321", passwordEncoder, perfilAluno);
+			var administrador = criarUsuario("Administrador PESCD", "admin@ufscar.br", null, "admin", "admin", passwordEncoder, perfilAdmin);
+			var secretario = criarUsuario("Secretario PESCD", "secretario@ufscar.br", null, "secretario", "secretario", passwordEncoder, perfilSecretario);
+			var professorResponsavel = criarUsuario("Professor Responsavel", "responsavel@ufscar.br", null, "responsavel", "responsavel", passwordEncoder, perfilResponsavel);
+			var professorSupervisor = criarUsuario("Professor Supervisor", "supervisor@ufscar.br", null, "supervisor", "supervisor", passwordEncoder, perfilSupervisor);
+			var alunoEstagio = criarUsuario("Aluno Estagio", "aluno.estagio@ufscar.br", "123456", "aluno.estagio", "123456", passwordEncoder, perfilAluno);
+			var alunoDocumentacao = criarUsuario("Aluno Documentacao", "aluno.documentacao@ufscar.br", "654321", "aluno.documentacao", "654321", passwordEncoder, perfilAluno);
 
 			usuarioRepository.save(administrador);
 			usuarioRepository.save(secretario);
@@ -74,6 +74,29 @@ public class PescdApplication {
 			oferta.setCriadoPor(secretario);
 			oferta.setCriadoEm(LocalDateTime.now());
 			ofertaRepository.save(oferta);
+
+			var ofertaAtrasada = new OfertaModel();
+			ofertaAtrasada.setNome("PESCD 2025/2");
+			ofertaAtrasada.setSemestre("2025/2");
+			ofertaAtrasada.setDataInicio(LocalDate.of(2025, 8, 1));
+			ofertaAtrasada.setDataFim(LocalDate.of(2025, 12, 15));
+			ofertaAtrasada.setStatus(StatusOferta.EM_ANDAMENTO);
+			ofertaAtrasada.setProfessorResponsavel(professorSupervisor);
+			ofertaAtrasada.setCriadoPor(secretario);
+			ofertaAtrasada.setCriadoEm(LocalDateTime.now().minusMonths(6));
+			ofertaRepository.save(ofertaAtrasada);
+
+			var ofertaAguardando = new OfertaModel();
+			ofertaAguardando.setNome("PESCD 2025/1");
+			ofertaAguardando.setSemestre("2025/1");
+			ofertaAguardando.setDataInicio(LocalDate.of(2025, 3, 1));
+			ofertaAguardando.setDataFim(LocalDate.of(2025, 7, 15));
+			ofertaAguardando.setStatus(StatusOferta.AGUARDANDO_ENCERRAMENTO_SECRETARIO);
+			ofertaAguardando.setProfessorResponsavel(professorResponsavel);
+			ofertaAguardando.setCriadoPor(secretario);
+			ofertaAguardando.setCriadoEm(LocalDateTime.now().minusMonths(12));
+			ofertaAguardando.setEncerradoResponsavelEm(LocalDateTime.now().minusDays(5));
+			ofertaRepository.save(ofertaAguardando);
 
 			var matriculaEstagio = criarMatricula(alunoEstagio, oferta, StatusAlunoOferta.PLANO_ENVIADO, TipoCredito.ESTAGIO);
 			alunoOfertaRepository.save(matriculaEstagio);
@@ -104,10 +127,17 @@ public class PescdApplication {
 			logStatusRepository.save(criarLog(matriculaEstagio, StatusAlunoOferta.NAO_ENVIADO, StatusAlunoOferta.PLANO_ENVIADO, alunoEstagio, "Plano enviado pelo aluno."));
 			logStatusRepository.save(criarLog(matriculaDocumentacao, StatusAlunoOferta.NAO_ENVIADO, StatusAlunoOferta.DOCUMENTACAO_ENVIADA, alunoDocumentacao, "Documentacao enviada pelo aluno."));
 
-			var configuracao = new ConfiguracaoSistemaModel();
-			configuracao.setChave("instrucoes_encerramento_secretario");
-			configuracao.setValor("Conferir notas, frequencias e documentos antes de encerrar a oferta.");
-			configuracaoSistemaRepository.save(configuracao);
+			if (configuracaoSistemaRepository.findByChave("instrucoes_encerramento_secretario").isEmpty()) {
+				var configuracao = new ConfiguracaoSistemaModel();
+				configuracao.setChave("instrucoes_encerramento_secretario");
+				configuracao.setValor("""
+						Conferir notas e frequencias finais de todos os alunos.
+						Verificar se todos os planos e relatorios foram aprovados.
+						Validar documentacao de docencia enviada.
+						Registrar licoes aprendidas antes de encerrar definitivamente.
+						""");
+				configuracaoSistemaRepository.save(configuracao);
+			}
 		}
 	}
 
@@ -119,6 +149,7 @@ public class PescdApplication {
 	private static UsuarioModel criarUsuario(
 			String nomeCompleto,
 			String email,
+			String ra,
 			String username,
 			String password,
 			PasswordEncoder passwordEncoder,
@@ -126,6 +157,7 @@ public class PescdApplication {
 		var usuario = new UsuarioModel();
 		usuario.setNomeCompleto(nomeCompleto);
 		usuario.setEmail(email);
+		usuario.setRa(ra);
 		usuario.setUsername(username);
 		usuario.setPassword(passwordEncoder.encode(password));
 		usuario.setEnabled(true);

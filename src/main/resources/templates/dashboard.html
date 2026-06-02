@@ -88,6 +88,21 @@
             color: #fff;
         }
 
+        .dashboard-action {
+            display: inline-block;
+            margin-top: 24px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 10px 14px;
+            text-decoration: none;
+            font: 700 0.86rem Verdana, Geneva, sans-serif;
+        }
+
+        .dashboard-action:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
         @media (max-width: 640px) {
             .topbar {
                 align-items: flex-start;
@@ -115,6 +130,7 @@
 <main>
     <h1 th:text="#{${dashboardTitleKey}}">Dashboard</h1>
     <p th:text="#{${dashboardDescriptionKey}}">Painel inicial do perfil autenticado.</p>
+    <a th:if="${dashboardActionUrl}" class="dashboard-action" th:href="@{${dashboardActionUrl}}" th:text="#{${dashboardActionKey}}">Ação</a>
 </main>
 </body>
 </html>

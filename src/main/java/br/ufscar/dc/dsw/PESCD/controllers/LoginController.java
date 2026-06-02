@@ -37,6 +37,8 @@ public class LoginController {
     public String secretarioDashboard(Model model) {
         model.addAttribute("dashboardTitleKey", "dashboard.secretario.title");
         model.addAttribute("dashboardDescriptionKey", "dashboard.secretario.description");
+        model.addAttribute("dashboardActionUrl", "/secretario/ofertas");
+        model.addAttribute("dashboardActionKey", "dashboard.secretario.acao.ofertas");
         return "dashboard";
     }
 
