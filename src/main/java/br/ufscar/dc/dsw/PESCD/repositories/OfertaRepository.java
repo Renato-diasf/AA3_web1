@@ -4,6 +4,8 @@ import br.ufscar.dc.dsw.PESCD.models.OfertaModel;
 import br.ufscar.dc.dsw.PESCD.models.StatusOferta;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,4 +20,14 @@ public interface OfertaRepository extends JpaRepository<OfertaModel, UUID> {
     List<OfertaModel> findByStatus(StatusOferta status);
 
     List<OfertaModel> findByProfessorResponsavelIdOrderBySemestreDesc(UUID professorResponsavelId);
+
+    @EntityGraph(attributePaths = {"professorResponsavel"})
+    @Query("""
+            select oferta
+            from OfertaModel oferta
+            join oferta.alunos matricula
+            where matricula.aluno.username = :username
+            order by oferta.semestre desc, oferta.dataInicio desc
+            """)
+    List<OfertaModel> findOfertasDoAlunoByUsername(@Param("username") String username);
 }
