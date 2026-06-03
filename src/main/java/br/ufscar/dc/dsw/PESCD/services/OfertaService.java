@@ -39,6 +39,14 @@ public class OfertaService {
     }
 
     @Transactional(readOnly = true)
+    public List<OfertaListagemDto> listarOfertasDoAlunoLogado(String username) {
+        var hoje = LocalDate.now();
+        return ofertaRepository.findOfertasDoAlunoByUsername(username).stream()
+                .map(oferta -> toListagemDto(oferta, hoje))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public OfertaModel buscarPorId(UUID id) {
         return ofertaRepository.findById(id).orElseThrow(RecursoNaoEncontradoException::new);
     }

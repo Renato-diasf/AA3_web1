@@ -30,6 +30,8 @@ public class LoginController {
     public String adminDashboard(Model model) {
         model.addAttribute("dashboardTitleKey", "dashboard.admin.title");
         model.addAttribute("dashboardDescriptionKey", "dashboard.admin.description");
+        model.addAttribute("dashboardActionUrl", "/admin/usuarios");
+        model.addAttribute("dashboardActionKey", "dashboard.admin.acao.usuarios");
         return "dashboard";
     }
 
@@ -46,6 +48,8 @@ public class LoginController {
     public String alunoDashboard(Model model) {
         model.addAttribute("dashboardTitleKey", "dashboard.aluno.title");
         model.addAttribute("dashboardDescriptionKey", "dashboard.aluno.description");
+        model.addAttribute("dashboardActionUrl", "/aluno/ofertas");
+        model.addAttribute("dashboardActionKey", "dashboard.aluno.acao.ofertas");
         return "dashboard";
     }
 
