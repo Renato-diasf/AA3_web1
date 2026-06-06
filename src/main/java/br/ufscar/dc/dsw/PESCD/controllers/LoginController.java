@@ -57,6 +57,8 @@ public class LoginController {
     public String supervisorDashboard(Model model) {
         model.addAttribute("dashboardTitleKey", "dashboard.supervisor.title");
         model.addAttribute("dashboardDescriptionKey", "dashboard.supervisor.description");
+        model.addAttribute("dashboardActionUrl", "/supervisor/supervisao");
+        model.addAttribute("dashboardActionKey", "dashboard.supervisor.acao.supervisao");
         return "dashboard";
     }
 
