@@ -64,3 +64,23 @@ Commits associados:
 
 - `a1281cf5f1cd550ddad59afcd8892155e57eca14` - Implementação AL.01, AL.02, AL.03, AL.04 e AD.01.
 - `1b1eb52faef164fb670e908732612e944b10b952` - Hotfix: Correção de integridade referencial e crash na exclusão de usuários.
+- 
+### Leonardo Shoji Ishiy
+
+Responsável pela implementação das funcionalidades do perfil Professor Responsável, englobando a aprovação final dos alunos e o fechamento das turmas, além do módulo de acesso público para Visitantes.
+
+#### User stories do Professor Responsável e Visitante: PR.01, PR.02, PR.03, PR.04 e V.01
+
+- **Acesso de Visitante (V.01):** Configuração de rota pública (`/ofertas`) com liberação de acesso no Spring Security, exibindo uma listagem das ofertas ativas ordenadas de forma decrescente pelo semestre para usuários não logados.
+- **Acompanhamento de Ofertas (PR.04):** Criação do painel (dashboard) do Professor Responsável, exibindo estritamente as turmas vinculadas ao usuário logado. Implementação de cálculo dinâmico para o status de exibição da oferta (Em andamento, Em atraso, Concluída) e renderização dos alunos inscritos.
+- **Conclusão de Relatório de Estágio (PR.01):** Implementação da tela de aprovação final do estágio regular. Integração de lógica no Controller para buscar e pré-carregar automaticamente no formulário a frequência e a nota sugeridas anteriormente pelo Professor Supervisor.
+- **Análise de Documentação de Docência (PR.02):** Criação do fluxo de aprovação direta para alunos com pedido de dispensa por docência no ensino superior, permitindo a leitura dos comprovantes e a inserção do parecer, nota e frequência finais, alterando o status da matrícula para "Concluído pelo responsável".
+- **Encerramento de Oferta e Estatísticas (PR.03):** Desenvolvimento do algoritmo de fechamento de turma. Implementação de validações na camada de serviço (via `ValidacaoNegocioException`) para garantir que a oferta só possa ser encerrada se 100% dos alunos estiverem avaliados.
+- **Segurança e Renderização Dinâmica:** Resolução de restrições de segurança do Thymeleaf (bloqueio de expressões SpEL em classes utilitárias como `DoubleSummaryStatistics`) centralizando o cálculo de médias e estatísticas da turma no back-end. Uso avançado de diretivas `th:if` na interface para ocultar botões indevidos (ex: esconder a opção de encerramento de uma oferta que já foi finalizada).
+
+Commits e PR associados:
+
+- `05caecbeaf1a9b3a30c889ab645e6e475ea776ca` - implementadas as User Stories de Prof. Responsável (PR.01 a PR.04) e Visitante (V.01)
+
+
+
