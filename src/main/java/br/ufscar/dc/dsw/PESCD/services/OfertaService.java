@@ -166,8 +166,7 @@ public class OfertaService {
 
     private void validarProfessor(UsuarioModel professor) {
         var perfisValidos = professor.getPerfis().stream()
-                .anyMatch(p -> p.getNome() == PerfilUsuario.ROLE_RESPONSAVEL
-                        || p.getNome() == PerfilUsuario.ROLE_SUPERVISOR);
+                .anyMatch(p -> p.getNome() == PerfilUsuario.ROLE_RESPONSAVEL);
         if (!perfisValidos) {
             throw new ValidacaoNegocioException("oferta.error.professor.invalido");
         }

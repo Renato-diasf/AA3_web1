@@ -49,8 +49,7 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public List<UsuarioModel> listarProfessoresParaOferta() {
-        var perfis = List.of(PerfilUsuario.ROLE_RESPONSAVEL, PerfilUsuario.ROLE_SUPERVISOR);
-        return usuarioRepository.findDistinctByPerfisNomeIn(perfis);
+        return usuarioRepository.findByPerfisNome(PerfilUsuario.ROLE_RESPONSAVEL);
     }
 
     @Transactional(readOnly = true)
