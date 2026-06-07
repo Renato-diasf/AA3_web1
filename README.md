@@ -39,3 +39,28 @@ Commits e PR associados:
 Commit associado:
 
 - [08f4da10d1f942cdc3bd6843fc8b6102d75bb11c](https://github.com/Hakirius/PESCD/commit/08f4da10d1f942cdc3bd6843fc8b6102d75bb11c) - Implementacao das user stories S1, S2, S3 e S4.
+
+### Pietro Scaglione
+
+Responsável pela implementação das funcionalidades do perfil Aluno, englobando o fluxo completo de estágio e pedidos de dispensa, e pelo módulo de gerenciamento de usuários do perfil Administrador.
+
+#### User stories do Aluno: AL.01, AL.02, AL.03 e AL.04
+
+- **Visualização de Ofertas (AL.01):** Criação de listagem dinâmica de ofertas vinculadas estritamente ao aluno autenticado na sessão, exibindo semestre, datas, professor responsável e status.
+- **Envio de Plano de Trabalho (AL.02):** Implementação de formulário para upload de plano de trabalho em PDF (validação de limite de 5MB), com seleção dinâmica de professor supervisor e transição automática do status da matrícula para "Plano Enviado".
+- **Dispensa por Docência (AL.03):** Desenvolvimento do fluxo de envio de documentação comprobatória de docência no ensino superior para fins de obtenção de créditos/dispensa, com validação de arquivo e alteração de status para "Documentação Enviada".
+- **Relatório Final de Estágio (AL.04):** Implementação da tela de encerramento do estágio contendo área de leitura dos dados anteriores (oferta e plano) e formulário para envio do relatório em PDF junto ao indicador de frequência (0 a 100%), avançando o status para "Relatório Enviado".
+- **Internacionalização:** Adaptação de todas as views do módulo Aluno para suporte a múltiplos idiomas (português/inglês) via chaves de mensagens.
+
+
+#### User stories do Administrador: AD.01
+
+- **Gerenciamento de Usuários:** Criação do CRUD completo (Listar, Criar, Editar e Excluir) para controle de acessos dos perfis Administrador, Secretário e Professor.
+- **Validações de Segurança:** Implementação de restrição de unicidade para e-mails e bloqueio lógico para impedir que o administrador logado exclua a própria conta.
+- **Correção de Bug Crítico (Exclusão de Usuários):** Resolução de crash do sistema (HTTP 500) ao deletar usuários com vínculos ativos no banco de dados. Ajuste nos mapeamentos de relacionamentos e tratamento de `DataIntegrityViolationException` com feedback amigável via interface.
+- **Interface e i18n:** Telas administrativas padronizadas em Bootstrap e totalmente internacionalizadas.
+
+Commits associados:
+
+- `a1281cf5f1cd550ddad59afcd8892155e57eca14` - Implementação AL.01, AL.02, AL.03, AL.04 e AD.01.
+- `1b1eb52faef164fb670e908732612e944b10b952` - Hotfix: Correção de integridade referencial e crash na exclusão de usuários.
