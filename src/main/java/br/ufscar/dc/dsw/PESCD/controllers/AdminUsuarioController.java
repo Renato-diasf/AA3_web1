@@ -4,6 +4,7 @@ import br.ufscar.dc.dsw.PESCD.dtos.AdminUsuarioForm;
 import br.ufscar.dc.dsw.PESCD.exception.ValidacaoNegocioException;
 import br.ufscar.dc.dsw.PESCD.services.UsuarioService;
 import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -111,6 +112,8 @@ public class AdminUsuarioController {
             redirectAttributes.addFlashAttribute("successMessageKey", "admin.usuario.sucesso.excluido");
         } catch (ValidacaoNegocioException ex) {
             redirectAttributes.addFlashAttribute("errorMessageKey", ex.getMessageKey());
+        } catch (DataIntegrityViolationException ex) {
+            redirectAttributes.addFlashAttribute("errorMessageKey", "admin.usuario.error.exclusao.com.vinculos");
         }
         return "redirect:/admin/usuarios";
     }

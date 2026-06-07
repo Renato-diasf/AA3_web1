@@ -6,4 +6,6 @@ import java.util.UUID;
 
 public interface ConclusaoRelatorioResponsavelRepository extends JpaRepository<ConclusaoRelatorioResponsavelModel, UUID> {
     ConclusaoRelatorioResponsavelModel findByRelatorioFinalId(UUID relatorioFinalId);
+
+    boolean existsByConcluidoPorId(UUID concluidoPorId);
 }

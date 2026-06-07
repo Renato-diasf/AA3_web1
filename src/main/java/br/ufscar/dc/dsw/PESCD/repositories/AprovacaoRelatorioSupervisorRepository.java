@@ -6,4 +6,6 @@ import java.util.UUID;
 
 public interface AprovacaoRelatorioSupervisorRepository extends JpaRepository<AprovacaoRelatorioSupervisorModel, UUID> {
     AprovacaoRelatorioSupervisorModel findByRelatorioFinalId(UUID relatorioFinalId);
+
+    boolean existsByAprovadoPorId(UUID aprovadoPorId);
 }

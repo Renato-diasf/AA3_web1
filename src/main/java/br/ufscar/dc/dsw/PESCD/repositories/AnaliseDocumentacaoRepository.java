@@ -6,4 +6,6 @@ import java.util.UUID;
 
 public interface AnaliseDocumentacaoRepository extends JpaRepository<AnaliseDocumentacaoModel, UUID> {
     AnaliseDocumentacaoModel findByDocumentacaoDocenciaId(UUID documentacaoDocenciaId);
+
+    boolean existsByAnalisadoPorId(UUID analisadoPorId);
 }

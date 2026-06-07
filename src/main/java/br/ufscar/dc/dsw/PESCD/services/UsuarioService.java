@@ -5,7 +5,15 @@ import br.ufscar.dc.dsw.PESCD.exception.RecursoNaoEncontradoException;
 import br.ufscar.dc.dsw.PESCD.exception.ValidacaoNegocioException;
 import br.ufscar.dc.dsw.PESCD.models.PerfilUsuario;
 import br.ufscar.dc.dsw.PESCD.models.UsuarioModel;
+import br.ufscar.dc.dsw.PESCD.repositories.AlunoOfertaRepository;
+import br.ufscar.dc.dsw.PESCD.repositories.AnaliseDocumentacaoRepository;
+import br.ufscar.dc.dsw.PESCD.repositories.AprovacaoPlanoRepository;
+import br.ufscar.dc.dsw.PESCD.repositories.AprovacaoRelatorioSupervisorRepository;
+import br.ufscar.dc.dsw.PESCD.repositories.ConclusaoRelatorioResponsavelRepository;
+import br.ufscar.dc.dsw.PESCD.repositories.LogStatusAlunoOfertaRepository;
+import br.ufscar.dc.dsw.PESCD.repositories.OfertaRepository;
 import br.ufscar.dc.dsw.PESCD.repositories.PerfilRepository;
+import br.ufscar.dc.dsw.PESCD.repositories.PlanoTrabalhoRepository;
 import br.ufscar.dc.dsw.PESCD.repositories.UsuarioRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
@@ -27,14 +35,38 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PerfilRepository perfilRepository;
     private final PasswordEncoder passwordEncoder;
+    private final OfertaRepository ofertaRepository;
+    private final AlunoOfertaRepository alunoOfertaRepository;
+    private final PlanoTrabalhoRepository planoTrabalhoRepository;
+    private final AprovacaoPlanoRepository aprovacaoPlanoRepository;
+    private final AprovacaoRelatorioSupervisorRepository aprovacaoRelatorioSupervisorRepository;
+    private final AnaliseDocumentacaoRepository analiseDocumentacaoRepository;
+    private final ConclusaoRelatorioResponsavelRepository conclusaoRelatorioResponsavelRepository;
+    private final LogStatusAlunoOfertaRepository logStatusAlunoOfertaRepository;
 
     public UsuarioService(
             UsuarioRepository usuarioRepository,
             PerfilRepository perfilRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            OfertaRepository ofertaRepository,
+            AlunoOfertaRepository alunoOfertaRepository,
+            PlanoTrabalhoRepository planoTrabalhoRepository,
+            AprovacaoPlanoRepository aprovacaoPlanoRepository,
+            AprovacaoRelatorioSupervisorRepository aprovacaoRelatorioSupervisorRepository,
+            AnaliseDocumentacaoRepository analiseDocumentacaoRepository,
+            ConclusaoRelatorioResponsavelRepository conclusaoRelatorioResponsavelRepository,
+            LogStatusAlunoOfertaRepository logStatusAlunoOfertaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.perfilRepository = perfilRepository;
         this.passwordEncoder = passwordEncoder;
+        this.ofertaRepository = ofertaRepository;
+        this.alunoOfertaRepository = alunoOfertaRepository;
+        this.planoTrabalhoRepository = planoTrabalhoRepository;
+        this.aprovacaoPlanoRepository = aprovacaoPlanoRepository;
+        this.aprovacaoRelatorioSupervisorRepository = aprovacaoRelatorioSupervisorRepository;
+        this.analiseDocumentacaoRepository = analiseDocumentacaoRepository;
+        this.conclusaoRelatorioResponsavelRepository = conclusaoRelatorioResponsavelRepository;
+        this.logStatusAlunoOfertaRepository = logStatusAlunoOfertaRepository;
     }
 
     @Transactional(readOnly = true)
@@ -132,6 +164,7 @@ public class UsuarioService {
         if (usuario.getUsername().equals(usernameLogado)) {
             throw new ValidacaoNegocioException("admin.usuario.error.autoexclusao");
         }
+        validarUsuarioSemVinculos(id);
         usuarioRepository.delete(usuario);
     }
 
@@ -207,6 +240,21 @@ public class UsuarioService {
     private void validarSenha(String password) {
         if (password.length() < 6) {
             throw new ValidacaoNegocioException("admin.usuario.error.password.tamanho");
+        }
+    }
+
+    private void validarUsuarioSemVinculos(UUID usuarioId) {
+        if (ofertaRepository.existsByProfessorResponsavelId(usuarioId)
+                || ofertaRepository.existsByCriadoPorId(usuarioId)
+                || ofertaRepository.existsByEncerradoSecretarioPorId(usuarioId)
+                || alunoOfertaRepository.existsByAlunoId(usuarioId)
+                || planoTrabalhoRepository.existsByProfessorSupervisorId(usuarioId)
+                || aprovacaoPlanoRepository.existsByAprovadoPorId(usuarioId)
+                || aprovacaoRelatorioSupervisorRepository.existsByAprovadoPorId(usuarioId)
+                || analiseDocumentacaoRepository.existsByAnalisadoPorId(usuarioId)
+                || conclusaoRelatorioResponsavelRepository.existsByConcluidoPorId(usuarioId)
+                || logStatusAlunoOfertaRepository.existsByAlteradoPorId(usuarioId)) {
+            throw new ValidacaoNegocioException("admin.usuario.error.exclusao.com.vinculos");
         }
     }
 

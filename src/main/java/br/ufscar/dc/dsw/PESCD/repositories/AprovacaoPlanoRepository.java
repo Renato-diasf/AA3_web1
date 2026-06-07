@@ -6,4 +6,6 @@ import java.util.UUID;
 
 public interface AprovacaoPlanoRepository extends JpaRepository<AprovacaoPlanoModel, UUID> {
     AprovacaoPlanoModel findByPlanoTrabalhoId(UUID planoTrabalhoId);
+
+    boolean existsByAprovadoPorId(UUID aprovadoPorId);
 }

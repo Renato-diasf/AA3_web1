@@ -21,6 +21,12 @@ public interface OfertaRepository extends JpaRepository<OfertaModel, UUID> {
 
     List<OfertaModel> findByProfessorResponsavelIdOrderBySemestreDesc(UUID professorResponsavelId);
 
+    boolean existsByProfessorResponsavelId(UUID professorResponsavelId);
+
+    boolean existsByCriadoPorId(UUID criadoPorId);
+
+    boolean existsByEncerradoSecretarioPorId(UUID encerradoSecretarioPorId);
+
     @EntityGraph(attributePaths = {"professorResponsavel", "criadoPor", "alunos"})
     List<OfertaModel> findByProfessorResponsavelUsernameOrderBySemestreDescDataInicioDescNomeAsc(String username);
 

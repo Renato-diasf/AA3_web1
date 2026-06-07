@@ -12,4 +12,6 @@ public interface PlanoTrabalhoRepository extends JpaRepository<PlanoTrabalhoMode
     Optional<PlanoTrabalhoModel> findOptionalByAlunoOfertaId(UUID alunoOfertaId);
 
     List<PlanoTrabalhoModel> findByProfessorSupervisorId(UUID professorSupervisorId);
+
+    boolean existsByProfessorSupervisorId(UUID professorSupervisorId);
 }

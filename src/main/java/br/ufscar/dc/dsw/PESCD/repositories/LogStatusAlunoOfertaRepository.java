@@ -7,4 +7,6 @@ import java.util.UUID;
 
 public interface LogStatusAlunoOfertaRepository extends JpaRepository<LogStatusAlunoOfertaModel, UUID> {
     List<LogStatusAlunoOfertaModel> findByAlunoOfertaIdOrderByAlteradoEmAsc(UUID alunoOfertaId);
+
+    boolean existsByAlteradoPorId(UUID alteradoPorId);
 }

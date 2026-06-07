@@ -13,6 +13,8 @@ import java.util.UUID;
 public interface AlunoOfertaRepository extends JpaRepository<AlunoOfertaModel, UUID> {
     List<AlunoOfertaModel> findByAlunoId(UUID alunoId);
 
+    boolean existsByAlunoId(UUID alunoId);
+
     @EntityGraph(attributePaths = {"aluno", "oferta"})
     List<AlunoOfertaModel> findByOfertaId(UUID ofertaId);
 
