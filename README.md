@@ -80,7 +80,8 @@ Responsável pela implementação das funcionalidades do perfil Professor Respon
 
 Commits e PR associados:
 
-- `05caecbeaf1a9b3a30c889ab645e6e475ea776ca` - implementadas as User Stories de Prof. Responsável (PR.01 a PR.04) e Visitante (V.01)
+Commits e PR associados:
 
+- [05caecbeaf1a9b3a30c889ab645e6e475ea776ca](https://github.com/Hakirius/PESCD/commit/05caecbeaf1a9b3a30c889ab645e6e475ea776ca) - Implementadas as User Stories de Professor Responsável (PR.01 a PR.04) e Visitante (V.01).
 
 
