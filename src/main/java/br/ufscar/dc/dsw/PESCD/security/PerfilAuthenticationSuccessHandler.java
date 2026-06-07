@@ -21,8 +21,8 @@ public class PerfilAuthenticationSuccessHandler implements AuthenticationSuccess
     static {
         DASHBOARD_POR_ROLE.put("ROLE_ADMIN", "/admin/dashboard");
         DASHBOARD_POR_ROLE.put("ROLE_SECRETARIO", "/secretario/ofertas");
-        DASHBOARD_POR_ROLE.put("ROLE_RESPONSAVEL", "/responsavel/dashboard");
-        DASHBOARD_POR_ROLE.put("ROLE_SUPERVISOR", "/supervisor/dashboard");
+        DASHBOARD_POR_ROLE.put("ROLE_RESPONSAVEL", "/responsavel/ofertas");
+        DASHBOARD_POR_ROLE.put("ROLE_SUPERVISOR", "/supervisor/supervisao");
         DASHBOARD_POR_ROLE.put("ROLE_ALUNO", "/aluno/dashboard");
     }
 

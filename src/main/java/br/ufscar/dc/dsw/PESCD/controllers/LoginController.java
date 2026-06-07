@@ -55,18 +55,12 @@ public class LoginController {
 
     @GetMapping("/supervisor/dashboard")
     public String supervisorDashboard(Model model) {
-        model.addAttribute("dashboardTitleKey", "dashboard.supervisor.title");
-        model.addAttribute("dashboardDescriptionKey", "dashboard.supervisor.description");
-        model.addAttribute("dashboardActionUrl", "/supervisor/supervisao");
-        model.addAttribute("dashboardActionKey", "dashboard.supervisor.acao.supervisao");
-        return "dashboard";
+        return "redirect:/supervisor/supervisao";
     }
 
     @GetMapping("/responsavel/dashboard")
     public String responsavelDashboard(Model model) {
-        model.addAttribute("dashboardTitleKey", "dashboard.responsavel.title");
-        model.addAttribute("dashboardDescriptionKey", "dashboard.responsavel.description");
-        return "dashboard";
+        return "redirect:/responsavel/ofertas";
     }
 
     @GetMapping("/acesso-negado")
