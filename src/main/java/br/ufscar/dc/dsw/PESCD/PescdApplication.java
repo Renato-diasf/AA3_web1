@@ -87,17 +87,6 @@ public class PescdApplication {
 			oferta.setCriadoEm(LocalDateTime.now());
 			ofertaRepository.save(oferta);
 
-			var ofertaAtrasada = new OfertaModel();
-			ofertaAtrasada.setNome("PESCD 2025/2");
-			ofertaAtrasada.setSemestre("2025/2");
-			ofertaAtrasada.setDataInicio(LocalDate.of(2025, 8, 1));
-			ofertaAtrasada.setDataFim(LocalDate.of(2025, 12, 15));
-			ofertaAtrasada.setStatus(StatusOferta.EM_ANDAMENTO);
-			ofertaAtrasada.setProfessorResponsavel(professorSupervisor);
-			ofertaAtrasada.setCriadoPor(secretario);
-			ofertaAtrasada.setCriadoEm(LocalDateTime.now().minusMonths(6));
-			ofertaRepository.save(ofertaAtrasada);
-
 			var ofertaAguardando = new OfertaModel();
 			ofertaAguardando.setNome("PESCD 2025/1");
 			ofertaAguardando.setSemestre("2025/1");
