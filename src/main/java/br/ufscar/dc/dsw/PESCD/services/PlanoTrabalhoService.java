@@ -8,6 +8,7 @@ import br.ufscar.dc.dsw.PESCD.models.PerfilUsuario;
 import br.ufscar.dc.dsw.PESCD.models.PlanoTrabalhoModel;
 import br.ufscar.dc.dsw.PESCD.models.StatusAlunoOferta;
 import br.ufscar.dc.dsw.PESCD.models.StatusOferta;
+import br.ufscar.dc.dsw.PESCD.models.TipoCredito;
 import br.ufscar.dc.dsw.PESCD.repositories.AlunoOfertaRepository;
 import br.ufscar.dc.dsw.PESCD.repositories.PlanoTrabalhoRepository;
 import br.ufscar.dc.dsw.PESCD.repositories.UsuarioRepository;
@@ -80,6 +81,7 @@ public class PlanoTrabalhoService {
 
         var statusAnterior = matricula.getStatus();
         matricula.setStatus(StatusAlunoOferta.PLANO_ENVIADO);
+        matricula.setTipoCredito(TipoCredito.ESTAGIO);
         var planoSalvo = planoTrabalhoRepository.save(plano);
         alunoOfertaRepository.save(matricula);
         logStatusAlunoOfertaService.registrar(

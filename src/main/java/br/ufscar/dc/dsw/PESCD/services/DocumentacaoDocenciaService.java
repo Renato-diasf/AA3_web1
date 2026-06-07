@@ -7,6 +7,7 @@ import br.ufscar.dc.dsw.PESCD.models.AlunoOfertaModel;
 import br.ufscar.dc.dsw.PESCD.models.DocumentacaoDocenciaModel;
 import br.ufscar.dc.dsw.PESCD.models.StatusAlunoOferta;
 import br.ufscar.dc.dsw.PESCD.models.StatusOferta;
+import br.ufscar.dc.dsw.PESCD.models.TipoCredito;
 import br.ufscar.dc.dsw.PESCD.repositories.AlunoOfertaRepository;
 import br.ufscar.dc.dsw.PESCD.repositories.DocumentacaoDocenciaRepository;
 import org.springframework.stereotype.Service;
@@ -72,6 +73,7 @@ public class DocumentacaoDocenciaService {
 
         var statusAnterior = matricula.getStatus();
         matricula.setStatus(StatusAlunoOferta.DOCUMENTACAO_ENVIADA);
+        matricula.setTipoCredito(TipoCredito.DOCUMENTACAO);
         var documentacaoSalva = documentacaoDocenciaRepository.save(documentacao);
         alunoOfertaRepository.save(matricula);
         logStatusAlunoOfertaService.registrar(

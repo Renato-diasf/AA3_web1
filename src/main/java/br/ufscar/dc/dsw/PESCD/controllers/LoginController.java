@@ -55,7 +55,11 @@ public class LoginController {
 
     @GetMapping("/supervisor/dashboard")
     public String supervisorDashboard(Model model) {
-        return "redirect:/supervisor/supervisao";
+        model.addAttribute("dashboardTitleKey", "dashboard.supervisor.title");
+        model.addAttribute("dashboardDescriptionKey", "dashboard.supervisor.description");
+        model.addAttribute("dashboardActionUrl", "/supervisor/supervisao");
+        model.addAttribute("dashboardActionKey", "dashboard.supervisor.acao.supervisao");
+        return "dashboard";
     }
 
     @GetMapping("/responsavel/dashboard")

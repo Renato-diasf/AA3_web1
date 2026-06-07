@@ -5,6 +5,9 @@ import br.ufscar.dc.dsw.PESCD.exception.ValidacaoNegocioException;
 import br.ufscar.dc.dsw.PESCD.services.ConfiguracaoSistemaService;
 import br.ufscar.dc.dsw.PESCD.services.OfertaService;
 import br.ufscar.dc.dsw.PESCD.services.UsuarioService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,6 +76,17 @@ public class SecretarioOfertaController {
         model.addAttribute("ofertaResumo", ofertaService.toListagemDto(oferta));
         model.addAttribute("alunos", oferta.getAlunos());
         return "secretario/ofertas/detalhes";
+    }
+
+    @GetMapping("/{id}/exportar-resultados")
+    public ResponseEntity<byte[]> exportarResultados(@PathVariable UUID id) {
+        var resultado = ofertaService.exportarResultadosCsv(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + resultado.nomeArquivo() + "\"")
+                .body(resultado.conteudo());
     }
 
     @GetMapping("/{id}/encerrar")

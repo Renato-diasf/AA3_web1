@@ -7,6 +7,7 @@ import br.ufscar.dc.dsw.PESCD.exception.RecursoNaoEncontradoException;
 import br.ufscar.dc.dsw.PESCD.exception.ValidacaoNegocioException;
 import br.ufscar.dc.dsw.PESCD.models.OfertaModel;
 import br.ufscar.dc.dsw.PESCD.models.PerfilUsuario;
+import br.ufscar.dc.dsw.PESCD.models.StatusAlunoOferta;
 import br.ufscar.dc.dsw.PESCD.models.StatusOferta;
 import br.ufscar.dc.dsw.PESCD.models.UsuarioModel;
 import br.ufscar.dc.dsw.PESCD.repositories.OfertaRepository;
@@ -14,9 +15,13 @@ import br.ufscar.dc.dsw.PESCD.util.StatusOfertaResolver;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -59,6 +64,34 @@ public class OfertaService {
     @Transactional(readOnly = true)
     public OfertaListagemDto toListagemDto(OfertaModel oferta) {
         return toListagemDto(oferta, LocalDate.now());
+    }
+
+    @Transactional(readOnly = true)
+    public ResultadoExportacaoCsv exportarResultadosCsv(UUID id) {
+        var oferta = buscarDetalhes(id);
+        if (oferta.getStatus() != StatusOferta.CONCLUIDA) {
+            throw new ValidacaoNegocioException("oferta.error.exportar.status.invalido");
+        }
+
+        var csv = new StringBuilder("RA,NOME_COMPLETO,NOTA,FREQUENCIA,CREDITOS_POR_ESTAGIO\r\n");
+        oferta.getAlunos().stream()
+                .filter(matricula -> matricula.getStatus() == StatusAlunoOferta.CONCLUIDO_PELO_RESPONSAVEL)
+                .sorted(Comparator.comparing(
+                        matricula -> matricula.getAluno().getNomeCompleto(),
+                        String.CASE_INSENSITIVE_ORDER))
+                .forEach(matricula -> csv
+                        .append(formatarCampoCsv(matricula.getAluno().getRa())).append(',')
+                        .append(formatarCampoCsv(matricula.getAluno().getNomeCompleto())).append(',')
+                        .append(formatarCampoCsv(matricula.getNotaFinal())).append(',')
+                        .append(formatarCampoCsv(matricula.getFrequenciaFinal())).append(',')
+                        .append(formatarCampoCsv(matricula.getTipoCredito()))
+                        .append("\r\n"));
+
+        return new ResultadoExportacaoCsv(
+                "resultados_%s_%s.csv".formatted(
+                        normalizarParaNomeArquivo(oferta.getNome()),
+                        normalizarParaNomeArquivo(oferta.getSemestre())),
+                csv.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     @Transactional
@@ -145,5 +178,28 @@ public class OfertaService {
             return "PESCD - " + semestre.trim();
         }
         return nome.trim();
+    }
+
+    private String formatarCampoCsv(Object valor) {
+        if (valor == null) {
+            return "";
+        }
+        var texto = valor.toString();
+        if (texto.contains(",") || texto.contains("\"") || texto.contains("\n") || texto.contains("\r")) {
+            return "\"" + texto.replace("\"", "\"\"") + "\"";
+        }
+        return texto;
+    }
+
+    private String normalizarParaNomeArquivo(String texto) {
+        var normalizado = Normalizer.normalize(texto, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "")
+                .toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("(^-+|-+$)", "");
+        return normalizado.isBlank() ? "oferta" : normalizado;
+    }
+
+    public record ResultadoExportacaoCsv(String nomeArquivo, byte[] conteudo) {
     }
 }
