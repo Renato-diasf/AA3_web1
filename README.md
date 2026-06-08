@@ -2,6 +2,63 @@
 
 Sistema para gerenciamento do Programa de Estagio Supervisionado de Capacitacao Docente.
 
+## Como executar
+
+No Windows:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+No Linux/macOS:
+
+```bash
+./mvnw spring-boot:run
+```
+
+Acesse:
+
+```text
+http://localhost:8080
+```
+
+## Como fazer build e testar
+
+No Windows:
+
+```powershell
+.\mvnw.cmd clean test
+.\mvnw.cmd clean package
+```
+
+No Linux/macOS:
+
+```bash
+./mvnw clean test
+./mvnw clean package
+```
+
+O artefato gerado fica em `target/PESCD-0.0.1-SNAPSHOT.jar`.
+
+Para executar o JAR:
+
+```powershell
+java -jar target/PESCD-0.0.1-SNAPSHOT.jar
+```
+
+## Usuarios de demonstracao
+
+Ao iniciar a aplicacao com o banco vazio, `PescdApplication` cria dados iniciais para demonstracao.
+
+| Perfil | Usuario | Senha |
+| --- | --- | --- |
+| Administrador | `admin` | `admin` |
+| Secretario | `secretario` | `secretario` |
+| Professor Responsavel | `responsavel` | `responsavel` |
+| Professor Supervisor | `supervisor` | `supervisor` |
+| Aluno | `aluno.estagio` | `123456` |
+| Aluno | `aluno.documentacao` | `654321` |
+
 ## Contribuicoes por integrante
 
 ### Renato Dias
@@ -64,7 +121,23 @@ Commits associados:
 
 - `a1281cf5f1cd550ddad59afcd8892155e57eca14` - Implementação AL.01, AL.02, AL.03, AL.04 e AD.01.
 - `1b1eb52faef164fb670e908732612e944b10b952` - Hotfix: Correção de integridade referencial e crash na exclusão de usuários.
-- 
+
+### Samuel Gerga Martins
+
+Responsável pela implementação das funcionalidades do perfil Professor Supervisor (PS)
+
+Responsável por orquestrar o fluxo de acompanhamento, avaliação e aprovação de alunos em estágio, além da implementação de uma funcionalidade extra de geração de relatórios.
+
+**User stories do Professor Supervisor: PS.01, PS.02, PS.03 e Estória Surpresa**
+
+- **Visualização de Ofertas e Supervisionados (PS.01):** Criação de *dashboard* dinâmico (listagem) vinculando as ofertas aos alunos sob a supervisão do professor autenticado. Implementação de lógica de agrupamento de dados no *back-end* (via DTOs e `Map`) e exibição condicional de botões de ação no *front-end* (Thymeleaf) baseada no status atual da matrícula do aluno.
+- **Aprovação de Plano de Trabalho (PS.02):** Desenvolvimento do fluxo de avaliação inicial do estágio. Implementação de tela com carregamento de dados em modo leitura (detalhes do plano e visualização do arquivo PDF) e formulário para captura do parecer do supervisor. Inclui transição atômica de status para "Plano Aprovado", persistência no banco de dados e geração automatizada do *timestamp* da operação.
+- **Aprovação de Relatório Final (PS.03):** Construção do formulário de avaliação de encerramento, consolidando dados do plano, relatório final em PDF e histórico de mudanças de status. Desenvolvimento da lógica de aprovação exigindo preenchimento obrigatório de parecer, validação/edição de frequência (0 a 100%) e atribuição de sugestão de nota (A, B, C, D ou E), avançando o status para "Relatório Aprovado pelo Supervisor" com registro no log de auditoria.
+- **Segurança e Internacionalização:** Adaptação de todas as *views* do módulo do Supervisor para suporte a múltiplos idiomas (português/inglês) utilizando arquivos de *properties*. Implementação de validações de segurança no *back-end* (Spring Security) para garantir que o professor logado tenha acesso e permissão de aprovação restritos apenas aos alunos sob sua própria supervisão.
+Commits associados:
+- `feat: Professor Supervisor` : Implementação do painel de listagem de alunos e dos fluxos de aprovação de planos de trabalho e relatórios finais (PS.01, PS.02 e PS.03).
+- `feat: EXPORT CSV` : : Implementação da estória surpresa para exportação dos resultados finais dos alunos em formato de arquivo CSV.
+
 ### Leonardo Shoji Ishiy
 
 Responsável pela implementação das funcionalidades do perfil Professor Responsável, englobando a aprovação final dos alunos e o fechamento das turmas, além do módulo de acesso público para Visitantes.
@@ -83,5 +156,9 @@ Commits e PR associados:
 Commits e PR associados:
 
 - [05caecbeaf1a9b3a30c889ab645e6e475ea776ca](https://github.com/Hakirius/PESCD/commit/05caecbeaf1a9b3a30c889ab645e6e475ea776ca) - Implementadas as User Stories de Professor Responsável (PR.01 a PR.04) e Visitante (V.01).
+
+### Grupo
+- **Exportação de Resultados em CSV (Estória Surpresa):** Criação de funcionalidade para extração dos dados consolidados do estágio. Implementação de *endpoint* HTTP com manipulação de cabeçalhos (`Content-Disposition: attachment`) para gerar e acionar o download automático do arquivo `.csv` na máquina do usuário.
+
 
 
