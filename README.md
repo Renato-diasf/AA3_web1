@@ -128,7 +128,7 @@ Responsável pela implementação das funcionalidades do perfil Professor Superv
 
 Responsável por orquestrar o fluxo de acompanhamento, avaliação e aprovação de alunos em estágio, além da implementação de uma funcionalidade extra de geração de relatórios.
 
-**User stories do Professor Supervisor: PS.01, PS.02, PS.03 e Estória Surpresa**
+**User stories do Professor Supervisor: PS.01, PS.02, PS.03 **
 
 - **Visualização de Ofertas e Supervisionados (PS.01):** Criação de *dashboard* dinâmico (listagem) vinculando as ofertas aos alunos sob a supervisão do professor autenticado. Implementação de lógica de agrupamento de dados no *back-end* (via DTOs e `Map`) e exibição condicional de botões de ação no *front-end* (Thymeleaf) baseada no status atual da matrícula do aluno.
 - **Aprovação de Plano de Trabalho (PS.02):** Desenvolvimento do fluxo de avaliação inicial do estágio. Implementação de tela com carregamento de dados em modo leitura (detalhes do plano e visualização do arquivo PDF) e formulário para captura do parecer do supervisor. Inclui transição atômica de status para "Plano Aprovado", persistência no banco de dados e geração automatizada do *timestamp* da operação.
