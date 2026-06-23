@@ -2,7 +2,6 @@ package br.ufscar.dc.dsw.PESCD.config;
 
 import br.ufscar.dc.dsw.PESCD.security.PerfilAuthenticationFailureHandler;
 import br.ufscar.dc.dsw.PESCD.security.PerfilAuthenticationSuccessHandler;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,7 +23,6 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/login", "/acesso-negado", "/ofertas", "/ofertas/publicas", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/secretario/**").hasRole("SECRETARIO")
                         .requestMatchers("/aluno/**").hasRole("ALUNO")
@@ -49,7 +47,6 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .exceptionHandling(exception -> exception.accessDeniedPage("/acesso-negado"))
-                .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();
